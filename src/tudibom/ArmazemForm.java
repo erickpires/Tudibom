@@ -6,6 +6,9 @@
 
 package tudibom;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 /**
  *
  * @author Erick
@@ -76,8 +79,27 @@ public class ArmazemForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
-        // TODO add your handling code here:
+        String numeroArmazem = jTextField1.getText();
+        boolean existeArmazem;
+        
+    	try {
+			ResultSet resultado = SqlDAO.chaveDeAcesso.executeQuery("SELECT * FROM armazem WHERE idArmazem =" + numeroArmazem + ";");
+			existeArmazem = resultado.next();
+			
+		} catch (SQLException e) {
+			// TODO Problema na consulta
+			e.printStackTrace();
+			return ;
+		}
+    	
+    	if (!existeArmazem){
+    		//TODO Grita que nao existe tal armazem em nossas posses
+    		return;
+    	}
+    	
         dispose();
+        new NotaFiscalForm().setVisible(true);
+        
     }//GEN-LAST:event_jButton1MouseClicked
 
 

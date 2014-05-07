@@ -1,5 +1,10 @@
 package tudibom;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -92,8 +97,26 @@ public class LoginForm extends javax.swing.JFrame {
 
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
         // TODO add your handling code here:
-        dispose();
-        new ArmazemForm().setVisible(true);
+    	String usuario = jTextField1.getText();
+    	@SuppressWarnings("deprecation")
+		String senha = jPasswordField1.getText();
+    	
+    	Connection conexao;
+    	Statement chaveDeAcesso;
+		try {
+			Class.forName("org.postgresql.Driver");
+			conexao = DriverManager.getConnection("jdbc:postgresql://localhost:5432/TudiBom",usuario,senha);
+			chaveDeAcesso = conexao.createStatement();
+		} catch (SQLException | ClassNotFoundException e) {
+			e.printStackTrace();
+			//TODO Popup vc tá querendo me enganar né fdp, digita a senha certo ou vou reportar pro lci
+			return;
+		}
+        SqlDAO.chaveDeAcesso = chaveDeAcesso;
+        SqlDAO.conexao = conexao;
+    	
+   	dispose();
+    new ArmazemForm().setVisible(true);
     }//GEN-LAST:event_jButton1MouseClicked
 
     
