@@ -85,12 +85,18 @@ public class ArmazemForm extends javax.swing.JFrame {
     	try {
 			ResultSet resultado = SqlDAO.chaveDeAcesso.executeQuery("SELECT * FROM armazem WHERE idArmazem =" + numeroArmazem + ";");
 			existeArmazem = resultado.next();
+			SqlDAO.armazem = Integer.parseInt(numeroArmazem);
 			
 		} catch (SQLException e) {
 			// TODO Problema na consulta
 			e.printStackTrace();
 			return ;
 		}
+    	catch (NumberFormatException e){
+    		e.printStackTrace();
+    		//TODO grita ai
+    		return;
+    	}
     	
     	if (!existeArmazem){
     		//TODO Grita que nao existe tal armazem em nossas posses

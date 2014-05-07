@@ -7,6 +7,9 @@
 package tudibom;
 
 import java.awt.event.MouseEvent;
+import java.sql.SQLException;
+
+import com.sun.org.apache.bcel.internal.generic.CPInstruction;
 
 /**
  *
@@ -168,12 +171,33 @@ public class NotaFiscalForm extends javax.swing.JFrame {
     	String endereço = jTextField2.getText();
     	String cnpj = jTextField5.getText();
     	String dia = (String)jComboBox1.getSelectedItem();
-    	String mes = (String)jComboBox2.getSelectedItem();
+    	String mes = ""+(jComboBox2.getSelectedIndex()+1);
     	String ano = jTextField6.getText();
     	String valorDeImpostos = jTextField3.getText();
     	String valorTotal = jTextField4.getText();
+    	valorDeImpostos = valorDeImpostos.replaceAll("," ,".");
+    	valorTotal = valorTotal.replaceAll("," ,".");
+    	String formatoData = dia+"/"+mes+"/"+ano;
     	
-    	System.out.println(mes);
+    	
+    	try {
+			Double.parseDouble(valorDeImpostos);
+			Double.parseDouble(valorTotal);			
+			Long.parseLong(cnpj);
+			
+    		SqlDAO.chaveDeAcesso.execute("insert into NotaFiscal values(5,'"+ formatoData + "','"+ endereço+ "',"+valorDeImpostos+"," + valorTotal+ ","+
+					cnpj+","+numeroDaNota+");");
+    		
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return;
+		}
+    	catch ( NumberFormatException e){
+    		//TODO Erro Tipo de dados diferente do esperado
+    		e.printStackTrace();
+    		return;
+    	}
     	
 		dispose();
         new Tudibom().setVisible(true);
