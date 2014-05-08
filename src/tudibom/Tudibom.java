@@ -6,13 +6,11 @@
 
 package tudibom;
 
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -47,23 +45,39 @@ public class Tudibom extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jComboBox2 = new javax.swing.JComboBox();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         setResizable(false);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null}
-            },
-            new String [] {
-                "Descrição", "Marca", "Valor", "Validade", "Prateleira"
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                int result = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja fazer log out?", "Comfirmação", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+                if(result == JOptionPane.YES_OPTION) {
+                    try {
+                        SqlDAO.conexao.close();
+                    } catch (SQLException e1) {
+                        e1.printStackTrace();
+                    }
+                    System.exit(0);
+                }
             }
+        });
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+                new Object[][]{
+                        {null, null, null, null, null}
+                },
+                new String[]{
+                        "Descrição", "Marca", "Valor", "Validade", "Prateleira"
+                }
         ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class
+            Class[] types = new Class[]{
+                    java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, String.class
             };
 
             public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
+                return types[columnIndex];
             }
         });
         jTable1.getTableHeader().setReorderingAllowed(false);
@@ -78,26 +92,26 @@ public class Tudibom extends javax.swing.JFrame {
 
         jTable2.setAutoCreateRowSorter(true);
         jTable2.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
+                new Object[][]{
 
-            },
-            new String [] {
-                "Descrição", "Marca", "Valor", "Validade", "Tipo", "Perecível/Tóxico", "Prateleira"
-            }
+                },
+                new String[]{
+                        "Descrição", "Marca", "Valor", "Validade", "Tipo", "Perecível/Tóxico", "Prateleira"
+                }
         ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            Class[] types = new Class[]{
+                    java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false
+            boolean[] canEdit = new boolean[]{
+                    false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
+                return types[columnIndex];
             }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
+                return canEdit[columnIndex];
             }
         });
         jTable2.getTableHeader().setReorderingAllowed(false);
@@ -112,9 +126,26 @@ public class Tudibom extends javax.swing.JFrame {
             jTable2.getColumnModel().getColumn(6).setResizable(false);
         }
 
-        jButton1.setText("Salvar");
+        atualizaTabela();
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Ingrediente", "Limpeza" }));
+        jButton1.setText("Salvar");
+        jButton1.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                jButton1MouseClicked(e);
+            }
+        });
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"Ingrediente", "Limpeza"}));
+        jComboBox1.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getItem().toString().equalsIgnoreCase("ingrediente"))
+                    jLabel2.setText("Perecível");
+                else
+                    jLabel2.setText("Tóxico");
+            }
+        });
 
         jLabel1.setText("Tipo");
 
@@ -125,43 +156,43 @@ public class Tudibom extends javax.swing.JFrame {
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1283, Short.MAX_VALUE)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jScrollPane1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(82, 82, 82)
-                        .addComponent(jButton1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1283, Short.MAX_VALUE)
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(jScrollPane1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel1))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(jLabel2)
+                                                .addGap(82, 82, 82)
+                                                .addComponent(jButton1))
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addContainerGap())))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
-                            .addContainerGap()
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel1)
-                                .addComponent(jLabel2)))
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(16, 16, 16)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 776, Short.MAX_VALUE))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addGroup(layout.createSequentialGroup()
+                                                        .addContainerGap()
+                                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                                .addComponent(jLabel1)
+                                                                .addComponent(jLabel2)))
+                                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(jButton1)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addGap(16, 16, 16)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 776, Short.MAX_VALUE))
         );
 
         pack();
@@ -174,12 +205,13 @@ public class Tudibom extends javax.swing.JFrame {
 		String validade = jTable1.getModel().getValueAt(0, 3).toString();
     	String tipoDeProduto = jComboBox1.getSelectedItem().toString();
     	String caracteristicaDoProduto = jComboBox2.getSelectedItem().toString();
+        String prateleira = jTable1.getModel().getValueAt(0, 4).toString();
     	
     	boolean caracteristicaDoProduto2 = caracteristicaDoProduto.equalsIgnoreCase("sim");
 	
     	try {
     		String insert = "insert into "+tipoDeProduto+ " values(default,'" +descrição+ "','" +marca+ "'," +valor+ ",'" +validade+ "',"
-					+caracteristicaDoProduto2+ ",1);";
+					+caracteristicaDoProduto2+ ", " + prateleira + ");";
 			System.out.println(insert);
 			SqlDAO.chaveDeAcesso.execute(insert);
 			
@@ -187,6 +219,7 @@ public class Tudibom extends javax.swing.JFrame {
 			jTable1.getModel().setValueAt("", 0, 1);
 			jTable1.getModel().setValueAt("", 0, 2);
 			jTable1.getModel().setValueAt("", 0, 3);
+            jTable1.getModel().setValueAt("", 0, 4);
 			
 			atualizaTabela();
 
@@ -216,18 +249,11 @@ public class Tudibom extends javax.swing.JFrame {
 				String validade = resultadoIngrediente.getString("DataValidade");
 				String tipo = "Ingrediente";
 				String caracteristica = resultadoIngrediente.getString("Eperecivel");
+                String prateleira = resultadoIngrediente.getString("Prateleira");
 				
+				caracteristica = caracteristica.equalsIgnoreCase("t") ? "Sim" : "Não";
 				
-				
-				tableModel.addRow(new String [] {descrição, marca, valor, validade, tipo, caracteristica});
-				
-				
-//				jTable2.getModel().setValueAt(descrição, i, 0);
-//				jTable2.getModel().setValueAt(marca, i, 1);
-//				jTable2.getModel().setValueAt(valor, i, 2);
-//				jTable2.getModel().setValueAt(validade, i, 3);
-//				jTable2.getModel().setValueAt(tipo, i, 4);
-//				jTable2.getModel().setValueAt(caracteristica, i, 5);
+				tableModel.addRow(new String [] {descrição, marca, valor, validade, tipo, caracteristica, prateleira});
 				
 				i++;
 			}
@@ -243,15 +269,11 @@ public class Tudibom extends javax.swing.JFrame {
 				String validade = resultadoLimpeza.getString("DataValidade");
 				String tipo = "Limpeza";
 				String caracteristica = resultadoLimpeza.getString("Etoxico");
-				
-				tableModel.addRow(new String [] {descrição, marca, valor, validade, tipo, caracteristica});
-				
-//				jTable2.getModel().setValueAt(descrição, i, 0);
-//				jTable2.getModel().setValueAt(marca, i, 1);
-//				jTable2.getModel().setValueAt(valor, i, 2);
-//				jTable2.getModel().setValueAt(validade, i, 3);
-//				jTable2.getModel().setValueAt(tipo, i, 4);
-//				jTable2.getModel().setValueAt(caracteristica, i, 5);
+                String prateleira = resultadoLimpeza.getString("Prateleira");
+
+                caracteristica = caracteristica.equalsIgnoreCase("t") ? "Sim" : "Não";
+
+				tableModel.addRow(new String [] {descrição, marca, valor, validade, tipo, caracteristica, prateleira});
 				
 				i++;
 			}

@@ -6,6 +6,8 @@
 
 package tudibom;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -40,10 +42,18 @@ public class ArmazemForm extends javax.swing.JFrame {
 
         jLabel1.setText("Digite o número do Armazém");
 
+        jTextField1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jButton1MouseClicked();
+            }
+        });
+
         jButton1.setText("Go!!");
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton1MouseClicked(evt);
+        jButton1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jButton1MouseClicked();
             }
         });
 
@@ -78,7 +88,7 @@ public class ArmazemForm extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+    private void jButton1MouseClicked() {//GEN-FIRST:event_jButton1MouseClicked
         String numeroArmazem = jTextField1.getText();
         boolean existeArmazem;
         

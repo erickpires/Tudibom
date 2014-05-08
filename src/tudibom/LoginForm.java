@@ -1,5 +1,8 @@
 package tudibom;
 
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -46,9 +49,24 @@ public class LoginForm extends javax.swing.JFrame {
         jLabel2.setText("Senha");
 
         jButton1.setText("Go!");
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton1MouseClicked(evt);
+        jButton1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jButton1MouseClicked();
+            }
+        });
+
+        jTextField1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jButton1MouseClicked();
+            }
+        });
+
+        jPasswordField1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jButton1MouseClicked();
             }
         });
 
@@ -95,7 +113,7 @@ public class LoginForm extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+    private void jButton1MouseClicked() {//GEN-FIRST:event_jButton1MouseClicked
         // TODO add your handling code here:
     	String usuario = jTextField1.getText();
     	@SuppressWarnings("deprecation")
@@ -107,11 +125,16 @@ public class LoginForm extends javax.swing.JFrame {
 			Class.forName("org.postgresql.Driver");
 			conexao = DriverManager.getConnection("jdbc:postgresql://localhost:5432/TudiBom",usuario,senha);
 			chaveDeAcesso = conexao.createStatement();
-		} catch (SQLException | ClassNotFoundException e) {
+            chaveDeAcesso.execute("SET datestyle TO \"ISO, DMY\";");
+		} catch (SQLException e) {
 			e.printStackTrace();
 			//TODO Popup vc tá querendo me enganar né fdp, digita a senha certo ou vou reportar pro lci
 			return;
 		}
+        catch ( ClassNotFoundException e){
+            e.printStackTrace();
+            return;
+        }
         SqlDAO.chaveDeAcesso = chaveDeAcesso;
         SqlDAO.conexao = conexao;
     	

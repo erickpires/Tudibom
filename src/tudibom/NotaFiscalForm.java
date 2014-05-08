@@ -6,10 +6,14 @@
 
 package tudibom;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 
 import com.sun.org.apache.bcel.internal.generic.CPInstruction;
+
+import javax.swing.*;
 
 /**
  *
@@ -32,6 +36,12 @@ public class NotaFiscalForm extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        Action action = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jButton1MouseClicked();
+            }
+        };
 
         jLabel1 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
@@ -72,13 +82,22 @@ public class NotaFiscalForm extends javax.swing.JFrame {
 
         jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro" }));
 
+        jTextField1.setAction(action);
+        jTextField2.setAction(action);
+        jTextField3.setAction(action);
+        jTextField4.setAction(action);
+        jTextField5.setAction(action);
+        jTextField6.setAction(action);
+
+
         jLabel8.setText("Ano");
         jLabel8.setToolTipText("");
 
         jButton1.setText("GO!");
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton1MouseClicked(evt);
+        jButton1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jButton1MouseClicked();
             }
         });
         
@@ -165,7 +184,7 @@ public class NotaFiscalForm extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    protected void jButton1MouseClicked(MouseEvent evt) {
+    protected void jButton1MouseClicked() {
 		
     	String numeroDaNota = jTextField1.getText();
     	String endereço = jTextField2.getText();
