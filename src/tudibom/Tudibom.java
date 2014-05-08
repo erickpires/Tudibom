@@ -6,6 +6,15 @@
 
 package tudibom;
 
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Erick
@@ -37,8 +46,6 @@ public class Tudibom extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jComboBox2 = new javax.swing.JComboBox();
-        jLabel3 = new javax.swing.JLabel();
-        jComboBox3 = new javax.swing.JComboBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -74,14 +81,14 @@ public class Tudibom extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Descrição", "Marca", "Valor", "Validade", "Tipo", "Perecível", "Tóxico"
+                "Descrição", "Marca", "Valor", "Validade", "Tipo", "Perecível/Tóxico"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false
+                false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -101,22 +108,36 @@ public class Tudibom extends javax.swing.JFrame {
             jTable2.getColumnModel().getColumn(3).setResizable(false);
             jTable2.getColumnModel().getColumn(4).setResizable(false);
             jTable2.getColumnModel().getColumn(5).setResizable(false);
-            jTable2.getColumnModel().getColumn(6).setResizable(false);
         }
 
+		atualizaTabela();
+        
         jButton1.setText("Salvar");
-
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton1MouseClicked(evt);
+            }
+        });
+        
+        
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Ingrediente", "Limpeza" }));
 
+        jComboBox1.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent arg0) {
+				if(arg0.getItem().toString().equalsIgnoreCase("ingrediente"))
+					jLabel2.setText("Perecível");
+				else
+					jLabel2.setText("Tóxico");
+				
+			}
+		});
+        
         jLabel1.setText("Tipo");
 
         jLabel2.setText("Perecível");
-
+        
         jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Sim", "Não" }));
-
-        jLabel3.setText("Tóxico");
-
-        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Sim", "Não" }));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -132,7 +153,6 @@ public class Tudibom extends javax.swing.JFrame {
                         .addGap(158, 158, 158)
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel3)
                         .addGap(88, 88, 88)
                         .addComponent(jButton1))
                     .addGroup(layout.createSequentialGroup()
@@ -140,7 +160,6 @@ public class Tudibom extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jComboBox3, 0, 172, Short.MAX_VALUE)
                         .addContainerGap())))
         );
         layout.setVerticalGroup(
@@ -151,8 +170,7 @@ public class Tudibom extends javax.swing.JFrame {
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel1)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3))
+                            .addComponent(jLabel2))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -160,8 +178,7 @@ public class Tudibom extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                     .addComponent(jButton1)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(17, 17, 17)
@@ -171,7 +188,113 @@ public class Tudibom extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
+    protected void jButton1MouseClicked(MouseEvent evt) {
+		String descrição = jTable1.getModel().getValueAt(0, 0).toString();
+		String marca = jTable1.getModel().getValueAt(0, 1).toString();
+		String valor = jTable1.getModel().getValueAt(0, 2).toString();
+		String validade = jTable1.getModel().getValueAt(0, 3).toString();
+    	String tipoDeProduto = jComboBox1.getSelectedItem().toString();
+    	String caracteristicaDoProduto = jComboBox2.getSelectedItem().toString();
+    	
+    	boolean caracteristicaDoProduto2 = caracteristicaDoProduto.equalsIgnoreCase("sim");
+	
+    	try {
+    		String insert = "insert into "+tipoDeProduto+ " values(default,'" +descrição+ "','" +marca+ "'," +valor+ ",'" +validade+ "',"
+					+caracteristicaDoProduto2+ ",1);";
+			System.out.println(insert);
+			SqlDAO.chaveDeAcesso.execute(insert);
+			
+			jTable1.getModel().setValueAt("", 0, 0);
+			jTable1.getModel().setValueAt("", 0, 1);
+			jTable1.getModel().setValueAt("", 0, 2);
+			jTable1.getModel().setValueAt("", 0, 3);
+			
+			atualizaTabela();
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			
+		}		
+	}
+    
+    void atualizaTabela(){
+    	String consultarIngrediente = "SELECT * From ingrediente;";
+    	String consultarLimpeza = "SELECT * From limpeza;";
+    	
+    	
+    	try {
+    		int i = 0;
+    		DefaultTableModel tableModel = (DefaultTableModel) jTable2.getModel();
+			ResultSet resultadoIngrediente = SqlDAO.chaveDeAcesso.executeQuery(consultarIngrediente);
+			limpaTabela(tableModel);
+			
+			while (resultadoIngrediente.next()){
+				
+				String descrição = resultadoIngrediente.getString("descricao");
+				String marca = resultadoIngrediente.getString("Marca");
+				String valor = resultadoIngrediente.getString("Valor");
+				String validade = resultadoIngrediente.getString("DataValidade");
+				String tipo = "Ingrediente";
+				String caracteristica = resultadoIngrediente.getString("Eperecivel");
+				
+				
+				
+				tableModel.addRow(new String [] {descrição, marca, valor, validade, tipo, caracteristica});
+				
+				
+//				jTable2.getModel().setValueAt(descrição, i, 0);
+//				jTable2.getModel().setValueAt(marca, i, 1);
+//				jTable2.getModel().setValueAt(valor, i, 2);
+//				jTable2.getModel().setValueAt(validade, i, 3);
+//				jTable2.getModel().setValueAt(tipo, i, 4);
+//				jTable2.getModel().setValueAt(caracteristica, i, 5);
+				
+				i++;
+			}
+			
+			
+	
+			ResultSet resultadoLimpeza = SqlDAO.chaveDeAcesso.executeQuery(consultarLimpeza);
+			while (resultadoLimpeza.next()){
+				
+				String descrição = resultadoLimpeza.getString("descricao");
+				String marca = resultadoLimpeza.getString("Marca");
+				String valor = resultadoLimpeza.getString("Valor");
+				String validade = resultadoLimpeza.getString("DataValidade");
+				String tipo = "Limpeza";
+				String caracteristica = resultadoLimpeza.getString("Etoxico");
+				
+				tableModel.addRow(new String [] {descrição, marca, valor, validade, tipo, caracteristica});
+				
+//				jTable2.getModel().setValueAt(descrição, i, 0);
+//				jTable2.getModel().setValueAt(marca, i, 1);
+//				jTable2.getModel().setValueAt(valor, i, 2);
+//				jTable2.getModel().setValueAt(validade, i, 3);
+//				jTable2.getModel().setValueAt(tipo, i, 4);
+//				jTable2.getModel().setValueAt(caracteristica, i, 5);
+				
+				i++;
+			}
+			
+			
+			
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	
+    }
+
+	private static void limpaTabela(DefaultTableModel tableModel) {
+		int nroDeLinhas = tableModel.getRowCount();
+		for ( int i = nroDeLinhas-1 ; i >= 0 ; i-- )
+			tableModel.removeRow(i);		
+	}
+
+	/**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
@@ -210,10 +333,8 @@ public class Tudibom extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JComboBox jComboBox2;
-    private javax.swing.JComboBox jComboBox3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;

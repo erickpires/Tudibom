@@ -185,7 +185,7 @@ public class NotaFiscalForm extends javax.swing.JFrame {
 			Double.parseDouble(valorTotal);			
 			Long.parseLong(cnpj);
 			
-    		SqlDAO.chaveDeAcesso.execute("insert into NotaFiscal values(5,'"+ formatoData + "','"+ endereço+ "',"+valorDeImpostos+"," + valorTotal+ ","+
+    		SqlDAO.chaveDeAcesso.execute("insert into NotaFiscal values(default,'"+ formatoData + "','"+ endereço+ "',"+valorDeImpostos+"," + valorTotal+ ","+
 					cnpj+","+numeroDaNota+");");
     		
 		} catch (SQLException e) {
