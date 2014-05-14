@@ -35,6 +35,8 @@ public class Tudibom extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        this.setTitle("Tudibom");
+
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -132,7 +134,7 @@ public class Tudibom extends javax.swing.JFrame {
         jButton1.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                jButton1MouseClicked(e);
+                acaoAdicionarProduto();
             }
         });
 
@@ -198,7 +200,11 @@ public class Tudibom extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    protected void jButton1MouseClicked(MouseEvent evt) {
+    protected void acaoAdicionarProduto() {
+
+        if(jTable1.getCellEditor()!=null)
+            jTable1.getCellEditor().stopCellEditing();
+
 		String descrição = jTable1.getModel().getValueAt(0, 0).toString();
 		String marca = jTable1.getModel().getValueAt(0, 1).toString();
 		String valor = jTable1.getModel().getValueAt(0, 2).toString();
@@ -208,7 +214,23 @@ public class Tudibom extends javax.swing.JFrame {
         String prateleira = jTable1.getModel().getValueAt(0, 4).toString();
     	
     	boolean caracteristicaDoProduto2 = caracteristicaDoProduto.equalsIgnoreCase("sim");
-	
+
+
+        if(!Util.isIntegerNumber(prateleira)){
+            JOptionPane.showMessageDialog(null, "O valor da prateleira deve ser um número");
+            return;
+        }
+
+        if(!Util.isDateFormat(validade)){
+            JOptionPane.showMessageDialog(null, "A validade deve seguir o padrão DD-MM-AAAA");
+            return;
+        }
+
+        if(!Util.isMoneyNumber(valor)){
+            JOptionPane.showMessageDialog(null, "O campo \"Valor\" está inválido");
+            return;
+        }
+
     	try {
     		String insert = "insert into "+tipoDeProduto+ " values(default,'" +descrição+ "','" +marca+ "'," +valor+ ",'" +validade+ "',"
 					+caracteristicaDoProduto2+ ", " + prateleira + ");";
@@ -224,9 +246,7 @@ public class Tudibom extends javax.swing.JFrame {
 			atualizaTabela();
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			
+            JOptionPane.showMessageDialog(null, "Falha ao salvar produto:\n" + e.getMessage());
 		}		
 	}
     
@@ -236,7 +256,6 @@ public class Tudibom extends javax.swing.JFrame {
     	
     	
     	try {
-    		int i = 0;
     		DefaultTableModel tableModel = (DefaultTableModel) jTable2.getModel();
 			ResultSet resultadoIngrediente = SqlDAO.chaveDeAcesso.executeQuery(consultarIngrediente);
 			limpaTabela(tableModel);
@@ -254,8 +273,6 @@ public class Tudibom extends javax.swing.JFrame {
 				caracteristica = caracteristica.equalsIgnoreCase("t") ? "Sim" : "Não";
 				
 				tableModel.addRow(new String [] {descrição, marca, valor, validade, tipo, caracteristica, prateleira});
-				
-				i++;
 			}
 			
 			
@@ -274,8 +291,6 @@ public class Tudibom extends javax.swing.JFrame {
                 caracteristica = caracteristica.equalsIgnoreCase("t") ? "Sim" : "Não";
 
 				tableModel.addRow(new String [] {descrição, marca, valor, validade, tipo, caracteristica, prateleira});
-				
-				i++;
 			}
 			
 			

@@ -35,6 +35,8 @@ public class LoginForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        this.setTitle("Login - Tudibom");
+
         jTextField1 = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -52,21 +54,21 @@ public class LoginForm extends javax.swing.JFrame {
         jButton1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                jButton1MouseClicked();
+                acaoLogar();
             }
         });
 
         jTextField1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                jButton1MouseClicked();
+                acaoLogar();
             }
         });
 
         jPasswordField1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                jButton1MouseClicked();
+                acaoLogar();
             }
         });
 
@@ -113,7 +115,7 @@ public class LoginForm extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1MouseClicked() {//GEN-FIRST:event_jButton1MouseClicked
+    private void acaoLogar() {//GEN-FIRST:event_jButton1MouseClicked
         // TODO add your handling code here:
     	String usuario = jTextField1.getText();
     	@SuppressWarnings("deprecation")
@@ -127,12 +129,12 @@ public class LoginForm extends javax.swing.JFrame {
 			chaveDeAcesso = conexao.createStatement();
             chaveDeAcesso.execute("SET datestyle TO \"ISO, DMY\";");
 		} catch (SQLException e) {
-			e.printStackTrace();
-			//TODO Popup vc tá querendo me enganar né fdp, digita a senha certo ou vou reportar pro lci
+            JOptionPane.showMessageDialog(null, "Não foi possível realizar logon\n(Verifique o nome de usuário e a senha)");
 			return;
 		}
         catch ( ClassNotFoundException e){
-            e.printStackTrace();
+            System.out.println("Não foi possível encontrar o driver para Postgresql");
+            System.exit(-1);
             return;
         }
         SqlDAO.chaveDeAcesso = chaveDeAcesso;

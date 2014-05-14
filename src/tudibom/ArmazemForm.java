@@ -6,6 +6,7 @@
 
 package tudibom;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
@@ -33,6 +34,8 @@ public class ArmazemForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        this.setTitle("Armazém - Tudibom");
+
         jLabel1 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
@@ -45,7 +48,7 @@ public class ArmazemForm extends javax.swing.JFrame {
         jTextField1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                jButton1MouseClicked();
+                acaoEscolheArmazem();
             }
         });
 
@@ -53,7 +56,7 @@ public class ArmazemForm extends javax.swing.JFrame {
         jButton1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                jButton1MouseClicked();
+                acaoEscolheArmazem();
             }
         });
 
@@ -88,28 +91,33 @@ public class ArmazemForm extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1MouseClicked() {//GEN-FIRST:event_jButton1MouseClicked
+    private void acaoEscolheArmazem() {//GEN-FIRST:event_jButton1MouseClicked
         String numeroArmazem = jTextField1.getText();
         boolean existeArmazem;
         
     	try {
+            if(!Util.isIntegerNumber(numeroArmazem)){
+                JOptionPane.showMessageDialog(null, "Por favor, digite um número");
+                jTextField1.setText("");
+                return;
+            }
+
 			ResultSet resultado = SqlDAO.chaveDeAcesso.executeQuery("SELECT * FROM armazem WHERE idArmazem =" + numeroArmazem + ";");
+
+            //Como idArmazem é chave primária de Armazem essa query ou tem um único elemento ou está vazia
+            //No caso em que está vazia (não existe o armazém) o método next retornará false
+
 			existeArmazem = resultado.next();
 			SqlDAO.armazem = Integer.parseInt(numeroArmazem);
 			
 		} catch (SQLException e) {
-			// TODO Problema na consulta
-			e.printStackTrace();
-			return ;
-		}
-    	catch (NumberFormatException e){
-    		e.printStackTrace();
-    		//TODO grita ai
-    		return;
-    	}
+            JOptionPane.showMessageDialog(null, "Não foi possível realizar a query\n(Não deveria acontecer)");
+            return;
+        }
     	
     	if (!existeArmazem){
-    		//TODO Grita que nao existe tal armazem em nossas posses
+            JOptionPane.showMessageDialog(null, "Este armazém não existe");
+            jTextField1.setText("");
     		return;
     	}
     	

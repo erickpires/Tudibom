@@ -43,6 +43,8 @@ public class NotaFiscalForm extends javax.swing.JFrame {
             }
         };
 
+        this.setTitle("Nota Fiscal - Tudibom");
+
         jLabel1 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
@@ -194,29 +196,45 @@ public class NotaFiscalForm extends javax.swing.JFrame {
     	String ano = jTextField6.getText();
     	String valorDeImpostos = jTextField3.getText();
     	String valorTotal = jTextField4.getText();
-    	valorDeImpostos = valorDeImpostos.replaceAll("," ,".");
+
+        valorDeImpostos = valorDeImpostos.replaceAll("," ,".");
     	valorTotal = valorTotal.replaceAll("," ,".");
-    	String formatoData = dia+"/"+mes+"/"+ano;
     	
-    	
+    	if(!Util.isMoneyNumber(valorDeImpostos)){
+            JOptionPane.showMessageDialog(null, "O valor de impostos é inválido");
+            return;
+        }
+
+        if(!Util.isMoneyNumber(valorTotal)){
+            JOptionPane.showMessageDialog(null, "O valor total é inválido");
+            return;
+        }
+
+        if(!Util.isIntegerNumber(cnpj)){
+            JOptionPane.showMessageDialog(null, "O valor de CNPJ é inválido");
+            return;
+        }
+
+        if(!Util.isIntegerNumber(numeroDaNota)){
+            JOptionPane.showMessageDialog(null, "O valor de número da nota é inválido");
+            return;
+        }
+
+        if(!Util.isIntegerNumber(ano)) {
+            JOptionPane.showMessageDialog(null, "O valor do ano é inválido");
+            return;
+        }
+
+        String formatoData = dia+"/"+mes+"/"+ano;
+
     	try {
-			Double.parseDouble(valorDeImpostos);
-			Double.parseDouble(valorTotal);			
-			Long.parseLong(cnpj);
-			
     		SqlDAO.chaveDeAcesso.execute("insert into NotaFiscal values(default,'"+ formatoData + "','"+ endereço+ "',"+valorDeImpostos+"," + valorTotal+ ","+
 					cnpj+","+numeroDaNota+");");
     		
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return;
-		}
-    	catch ( NumberFormatException e){
-    		//TODO Erro Tipo de dados diferente do esperado
-    		e.printStackTrace();
-    		return;
-    	}
+            JOptionPane.showMessageDialog(null, "Falha ao criar nota:\n" + e.getMessage());
+            return;
+        }
     	
 		dispose();
         new Tudibom().setVisible(true);
